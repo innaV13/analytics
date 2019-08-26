@@ -28,7 +28,8 @@ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`
 sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 sudo su - postgres
-psql
+
+psql -U posgtres
 
 
 
@@ -37,6 +38,6 @@ CREATE USER analytics;
 ALTER USER test SET password TO 'password';
 GRANT ALL ON DATABASE analytics TO analytics;
 CREATE DATABASE tests;
-GRANT ALL ON DATABASE analytics TO tests;
+GRANT ALL ON DATABASE tests TO analytics;
 
 

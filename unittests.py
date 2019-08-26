@@ -2,7 +2,7 @@ import unittest, json
 from app import db, app
 from app.models import Imports
 from sqlalchemy.sql.expression import func
-import copy, datetime
+import copy, datetime, json
 
 
 with open('tests/citizens.json','r') as f:
@@ -37,7 +37,8 @@ class ImportsTestCase(BaseTestCase):
         current_max_import_id = self.get_max_import_id()
         response = self.app.post("/imports", data=citizens,content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(response.json.get('data', None).get('import_id',None))
+        data = json.loads(response.get_data())
+        self.assertTrue(data.get('data', None).get('import_id',None))
         db.session.commit()
 
 
@@ -70,7 +71,7 @@ class ImportsTestCase(BaseTestCase):
 
         must_be_greater_error = 'Value must be greater than 0'
         not_valid_int = 'Not a valid integer.'
-        errors = response.json['error']['citizens']
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors['0']['citizen_id'] == [must_be_greater_error])
         self.assertTrue(errors['1']['citizen_id'] == errors['2']['citizen_id'] == [not_valid_int])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
@@ -88,7 +89,8 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
             content_type='application/json')
         self.assertEqual(response.status_code, 201)
-        self.assertTrue(response.json.get('data').get('import_id',False))
+        data = json.loads(response.get_data())
+        self.assertTrue(data.get('data').get('import_id',False))
         db.session.commit()
 
         # Check not valid town,street,building
@@ -105,7 +107,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
             content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error',dict()).get('citizens',dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         not_valid_str_text_error = 'The value should contains at least one letter or digit'
         too_long_str_text_error = 'The string length cannot be more than 256 characters'
         self.assertTrue(errors['0']['building'] == errors['0']['street'] == errors['0']['town'] == [not_valid_str_text_error])
@@ -123,7 +125,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
                                  content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         not_valid_int_error = 'Not a valid integer.'
         wrong_int_error = 'Value must be greater than 0'
         self.assertTrue(errors['0']['apartment'] == errors['1']['apartment'] == [not_valid_int_error])
@@ -139,7 +141,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
             content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors['0']['name'] == ['Not a valid string.'])
         self.assertTrue(errors['1']['name'] == ['The string length cannot be more than 256 characters'])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
@@ -155,7 +157,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
             content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors['0']['birth_date'] == errors['1']['birth_date'] == errors['2']['birth_date'] == ['Not a valid datetime.'])
         self.assertTrue(errors['3']['birth_date'] == ['Date must be in past'])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
@@ -168,7 +170,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
              content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors['0']['gender'] == ['Must be one of: male, female.'])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
 
@@ -181,7 +183,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
              content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors == ['Some relatives is missing.'])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
 
@@ -194,7 +196,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
                                  content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         error_keys = list(errors['0'].keys())
         error_values = list(set([v[0] for v in errors['0'].values()]))
 
@@ -210,7 +212,7 @@ class ImportsTestCase(BaseTestCase):
         response = self.app.post("/imports", data=json.dumps(dict(citizens=citizens_data), ensure_ascii=False),
                                  content_type='application/json')
         self.assertEqual(response.status_code, 400)
-        errors = response.json.get('error', dict()).get('citizens', dict())
+        errors = json.loads(response.get_data())['error']['citizens']
         self.assertTrue(errors['0']['strange_things'] == ['Unknown field.'])
         self.assertEqual(self.get_max_import_id(), current_max_import_id)
 
@@ -221,9 +223,9 @@ class ChangeCitizenTestCase(BaseTestCase):
         current_max_import_id = self.get_max_import_id()
         response = self.app.post("/imports", data=citizens, content_type='application/json')
         self.assertEqual(response.status_code, 201)
-
-        self.assertEqual(response.json, dict(data=dict(import_id=current_max_import_id + 1)))
-        return response.json['data']['import_id']
+        data = json.loads(response.get_data())
+        self.assertEqual(data, dict(data=dict(import_id=current_max_import_id + 1)))
+        return data['data']['import_id']
 
     def test_valid_change(self):
         import_id = self.create_import()
@@ -237,8 +239,9 @@ class ChangeCitizenTestCase(BaseTestCase):
 
         self.assertEqual(response.status_code, 200)
         citizen_change_data['citizen_id'] = citizen_id
-        del response.json['data']['relatives']
-        self.assertEqual(citizen_change_data, response.json['data'])
+        data = json.loads(response.get_data())
+        del data['data']['relatives']
+        self.assertEqual(citizen_change_data, data['data'])
 
 
 if __name__ == '__main__':
