@@ -5,6 +5,10 @@ DECLARE
 	_response json;
 BEGIN
 
+    IF not exists(select 1 from imports where id = _import_id) THEN
+        RAISE EXCEPTION 'Import does not exists';
+    END IF;
+
 	with data as (
 		select c1.citizen_id, c2.citizen_id as b_c_id, date_part('month',c2.birth_date) as b_month
 		from citizens c1

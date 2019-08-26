@@ -1,0 +1,34 @@
+sudo apt install git
+sudo apt install python3-flask
+export FLASK_APP=analytics.py
+sudo apt-get upgrade
+sudo apt install python3-pip
+sudo apt --fix-missing install python3-pip
+sudo pip3 install flask_sqlalchemy
+sudo pip3 install flask_migrate
+sudo pip3 install flask_marshmallow
+sudo pip3 install numpy
+
+sudo apt-get install python-psycopg2
+
+sudo apt-get install libpq-dev
+sudo apt-get install python3-Psycopg2
+sudo apt-get install python3-dev
+sudo pip3 install Psycopg2
+
+postgresql
+
+sudo apt-get install wget ca-certificates
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+sudo apt-get update
+sudo apt-get install postgresql postgresql-contrib
+sudo su - postgres
+psql
+
+CREATE DATABASE analytics;
+CREATE USER analytics;
+GRANT ALL ON DATABASE analytics TO analytics;
+CREATE DATABASE tests;
+GRANT ALL ON DATABASE analytics TO tests;
+

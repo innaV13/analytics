@@ -5,6 +5,9 @@ DECLARE
 	_response json;
 BEGIN
 
+    IF not exists(select 1 from imports where id = _import_id) THEN
+        RAISE EXCEPTION 'Import does not exists';
+    END IF;
 	-- получаем массив возрастов по каждому городу
 	select json_agg(a) into _response
 	from (

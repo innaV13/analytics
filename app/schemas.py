@@ -28,6 +28,8 @@ def validateName(value):
     checkStringLength(value)
 
 def checkRelatives(values):
+    if len(values) < 1:
+        raise ValidationError("Citizens is missing")
     rel_dict = {}
     for v in values:
         rel_dict[v['citizen_id']] = v['relatives']
