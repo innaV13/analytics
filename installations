@@ -1,6 +1,8 @@
+------------------------------------------------------------------------------------------------------------------------
+python
+------------------------------------------------------------------------------------------------------------------------
 sudo apt install git
 sudo apt install python3-flask
-export FLASK_APP=analytics.py
 sudo apt-get upgrade
 sudo apt install python3-pip
 sudo apt --fix-missing install python3-pip
@@ -16,7 +18,9 @@ sudo apt-get install python3-Psycopg2
 sudo apt-get install python3-dev
 sudo pip3 install Psycopg2
 
+------------------------------------------------------------------------------------------------------------------------
 postgresql
+------------------------------------------------------------------------------------------------------------------------
 
 sudo apt-get install wget ca-certificates
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -26,9 +30,13 @@ sudo apt-get install postgresql postgresql-contrib
 sudo su - postgres
 psql
 
+
+
 CREATE DATABASE analytics;
 CREATE USER analytics;
+ALTER USER test SET password TO 'password';
 GRANT ALL ON DATABASE analytics TO analytics;
 CREATE DATABASE tests;
 GRANT ALL ON DATABASE analytics TO tests;
+
 
