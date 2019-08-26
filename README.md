@@ -15,7 +15,8 @@ psql -U analytics -d analytics -a -f towns_stat_percentile_age.sql
 
 cd analytics
 
-python3 ./analytics.py
+python3 ./analytics.py 
+или flask run
 
 Для запуска тестов нужно выполнить:
 
